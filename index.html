@@ -1164,8 +1164,9 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 /* Reproductor de YouTube oculto — el control visible está abajo a la izquierda */
 #ytPlayer{
   position:fixed;
-  width:1px;
-  height:1px;
+  /* YouTube requiere un iframe de al menos 200 px para inicializarse. */
+  width:200px;
+  height:200px;
   opacity:0;
   pointer-events:none;
   bottom:-9999px;
@@ -1711,10 +1712,14 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
   // Callback global que YouTube llama cuando la API está lista
   window.onYouTubeIframeAPIReady = function(){
     ytPlayer = new YT.Player('ytPlayer', {
-      videoId: '4VHx3GM_gw8',
+      width: 200,
+      height: 200,
+      videoId: 'rtOvBOTyX00',
       playerVars:{
         autoplay: 0,
         controls: 0,
+        enablejsapi: 1,
+        origin: window.location.origin,
         playsinline: 1,
         rel: 0
       },
@@ -1725,11 +1730,29 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
           if (pendingPlay){ doPlay(); }
         },
         onStateChange: function(e){
+          if (e.data === YT.PlayerState.PLAYING){
+            musicPlaying = true;
+            iconPlay.style.display = 'none';
+            iconPause.style.display = 'block';
+            musicPlayerEl.classList.remove('is-paused');
+          }
+          if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED){
+            musicPlaying = false;
+            iconPlay.style.display = 'block';
+            iconPause.style.display = 'none';
+            musicPlayerEl.classList.add('is-paused');
+          }
           // Si el video termina, reiniciar (loop manual más fiable)
           if (e.data === YT.PlayerState.ENDED){
             ytPlayer.seekTo(0);
             ytPlayer.playVideo();
           }
+        },
+        onError: function(){
+          musicPlaying = false;
+          iconPlay.style.display = 'block';
+          iconPause.style.display = 'none';
+          musicPlayerEl.classList.add('is-paused');
         }
       }
     });
@@ -1737,10 +1760,6 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 
   function doPlay(){
     ytPlayer.playVideo();
-    musicPlaying = true;
-    iconPlay.style.display  = 'none';
-    iconPause.style.display = 'block';
-    musicPlayerEl.classList.remove('is-paused');
   }
 
   function doPause(){

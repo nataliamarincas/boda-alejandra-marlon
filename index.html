@@ -443,7 +443,8 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
   position:relative;
   z-index:1;
   width:100%;
-  padding:0 1.6rem 4.2rem;
+  /* Deja una zona independiente para el indicador «Desliza». */
+  padding:0 1.6rem clamp(8rem, 15vh, 10rem);
   text-align:center;
   color:var(--warm-white);
 }
@@ -518,7 +519,7 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 .hero-scroll{
   position:absolute;
   left:50%;
-  bottom:1.8rem;
+  bottom:1.4rem;
   transform:translateX(-50%);
   z-index:1;
   display:flex;
@@ -695,6 +696,13 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
   font-size:clamp(1.25rem, 3vw, 1.6rem);
   color:var(--ink);
 }
+.timeline-text{
+  margin-top:.65rem;
+  font-family:var(--f-serif);
+  font-size:1.04rem;
+  line-height:1.55;
+  color:var(--ink-soft);
+}
 
 @media (max-width:640px){
   .timeline::before{ left:9px; }
@@ -784,9 +792,27 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 }
 .gallery-item:hover img{ transform:scale(1.07); }
 
+.gallery-item figcaption{
+  position:absolute;
+  inset:auto 0 0;
+  padding:1.4rem .9rem .7rem;
+  background:linear-gradient(transparent, rgba(44,48,34,.65));
+  color:var(--warm-white);
+  font-size:.64rem;
+  font-weight:500;
+  letter-spacing:.2em;
+  text-align:center;
+  text-transform:uppercase;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity .35s ease, transform .35s ease;
+}
+.gallery-item:hover figcaption,
+.gallery-item:focus-within figcaption{ opacity:1; transform:translateY(0); }
+
 .gallery-item--big{ grid-column:span 3; grid-row:span 2; }
 .gallery-item--med{ grid-column:span 3; }
-.gallery-item--small{ grid-column:span 2; }
+.gallery-item--small{ grid-column:span 3; }
 
 .gallery-placeholder{
   width:100%;
@@ -1126,7 +1152,7 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
   0%,100%{ transform:scaleY(.5); opacity:.6; }
   50%{ transform:scaleY(1); opacity:1; }
 }
-/* YouTube iframe hidden — off screen */
+/* Reproductor de YouTube oculto — el control visible está abajo a la izquierda */
 #ytPlayer{
   position:fixed;
   width:1px;
@@ -1142,7 +1168,6 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 }
 @media (prefers-reduced-motion: reduce){
   .music-wave span{ animation:none; height:8px; }
-}
   *{ animation:none !important; transition:none !important; }
   .reveal, .reveal-stagger > *{ opacity:1; transform:none; }
   .hero-media img{ transform:none; }
@@ -1153,12 +1178,9 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 
 <!-- ============================================================
      MÚSICA — YouTube iframe oculto + reproductor flotante
-     A Thousand Years — Christina Perri  (YT: 4VHx3GM_gw8)
+     A Thousand Years — Christina Perri
      ============================================================ -->
-<iframe id="ytPlayer"
-  src="https://www.youtube.com/watch?v=rtOvBOTyX00"
-  title="A Thousand Years - Christina Perri">
-</iframe>
+<div id="ytPlayer" aria-hidden="true"></div>
 
 <div class="music-player is-paused" id="musicPlayer" aria-label="Reproductor de música">
   <button class="music-btn" id="musicBtn" aria-label="Reproducir / Pausar música" title="A Thousand Years · Christina Perri">
@@ -1211,7 +1233,7 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
   <div class="envelope" id="envelope">
     <div class="envelope-seal">A&amp;M</div>
     <p class="envelope-names">Alejandra &amp; Marlon</p>
-    <p class="envelope-sub">Tienen una invitación especial para ti</p>
+    <p class="envelope-sub">Queremos celebrar este día tan especial contigo</p>
     <button class="btn btn-open" id="openInvitation">
       Abrir Invitación
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -1237,7 +1259,7 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
     <p class="hero-eyebrow">Nos casamos</p>
     <h1 class="hero-names">Alejandra <span class="amp">&amp;</span> Marlon</h1>
     <p class="hero-date">19 · Diciembre · 2026</p>
-    <p class="hero-phrase">Entre jardines, atardeceres dorados y aroma a eucalipto, comienza la historia de dos vidas que se eligen para siempre.</p>
+    <p class="hero-phrase">Con mucha alegría celebramos nuestro amor y queremos compartir este momento contigo.</p>
   </div>
 
   <div class="hero-scroll" aria-hidden="true">
@@ -1252,9 +1274,9 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 <section class="section welcome" id="bienvenida">
   <div class="container">
     <div class="welcome-card reveal">
-      <p class="welcome-greeting">Querido/a</p>
+      <p class="welcome-greeting">Hola,</p>
       <p class="welcome-name" id="guestName">Invitado Especial</p>
-      <p class="welcome-text">Nos encantaría compartir este día tan especial contigo. Tu presencia hará nuestra celebración aún más significativa.</p>
+      <p class="welcome-text">Nos hará muy felices contar contigo en este día. Tu presencia es parte esencial de esta celebración.</p>
       <div class="welcome-guests">
         Invitados <strong id="guestCount">(1)</strong>
       </div>
@@ -1269,25 +1291,28 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
   <div class="container">
     <div class="story-head reveal">
       <p class="eyebrow center">Nuestra historia</p>
-      <h2 class="section-title">Un camino que nos trajo hasta aquí</h2>
-      <p class="section-lead center">Cada historia de amor tiene su propio ritmo. Esta es la nuestra, contada en tres momentos.</p>
+      <h2 class="section-title">Un camino que elegimos recorrer juntos</h2>
+      <p class="section-lead center">Nuestra historia ha crecido entre momentos sencillos, grandes aprendizajes y la certeza de querer compartir la vida.</p>
     </div>
 
     <div class="timeline">
       <div class="timeline-item reveal">
         <span class="timeline-dot" aria-hidden="true"></span>
         <p class="timeline-date">30 de marzo de 2020</p>
-        <p class="timeline-title">El día en que nuestros caminos se cruzaron</p>
+        <p class="timeline-title">El día en que nuestros caminos se encontraron</p>
+        <p class="timeline-text">El 30 de marzo de 2020 comenzó una conversación que, sin saberlo, abriría paso a una historia muy especial.</p>
       </div>
       <div class="timeline-item reveal">
         <span class="timeline-dot" aria-hidden="true"></span>
-        <p class="timeline-date">Desde entonces</p>
-        <p class="timeline-title">Cada día sumó una razón más para elegirnos</p>
+        <p class="timeline-date">Con el paso del tiempo</p>
+        <p class="timeline-title">Elegirnos se convirtió en nuestra manera de amar</p>
+        <p class="timeline-text">Entre risas, apoyo y sueños compartidos, fuimos construyendo un vínculo que hoy celebramos con el corazón lleno.</p>
       </div>
       <div class="timeline-item reveal">
         <span class="timeline-dot" aria-hidden="true"></span>
         <p class="timeline-date">19 de diciembre de 2026</p>
-        <p class="timeline-title">El día en que comenzaremos una nueva etapa juntos</p>
+        <p class="timeline-title">El comienzo de nuestro para siempre</p>
+        <p class="timeline-text">Hoy damos este paso con ilusión y gratitud, acompañados por las personas que han sido parte de nuestro camino.</p>
       </div>
     </div>
   </div>
@@ -1300,7 +1325,7 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
   <div class="container">
     <div class="reveal center" style="margin-bottom:3rem;">
       <p class="eyebrow center">Falta muy poco</p>
-      <h2 class="section-title">La cuenta regresiva ha comenzado</h2>
+      <h2 class="section-title">Cada día nos acerca a nuestro gran momento</h2>
     </div>
 
     <div class="countdown-grid reveal-stagger" id="countdown">
@@ -1337,34 +1362,27 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
       <p class="eyebrow center">Momentos</p>
       <h2 class="section-title">Galería</h2>
       <p class="section-lead center">
-        Un adelanto de los momentos que queremos guardar contigo.
+        Tres recuerdos que atesoramos y que nos recuerdan lo bonito de este camino.
       </p>
     </div>
 
     <div class="gallery-grid reveal-stagger">
 
-      <div class="gallery-item gallery-item--big">
+      <!-- Reemplaza las rutas src por tus fotografías definitivas cuando las tengas. -->
+      <figure class="gallery-item gallery-item--big">
         <img src="assets/portada.jpg" alt="Alejandra y Marlon al atardecer">
-      </div>
+        <figcaption>Nuestra historia</figcaption>
+      </figure>
 
-      <div class="gallery-item gallery-item--med">
+      <figure class="gallery-item gallery-item--med">
         <img src="assets/foto_1.png" alt="Alejandra y Marlon">
-      </div>
+        <figcaption>Momentos juntos</figcaption>
+      </figure>
 
-      <div class="gallery-item gallery-item--small">
+      <figure class="gallery-item gallery-item--small">
         <img src="assets/foto_2.png" alt="Alejandra y Marlon Grado">
-      </div>
-
-      <div class="gallery-item gallery-item--small">
-        <div class="gallery-placeholder">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-            <rect x="3" y="3" width="18" height="18" rx="2"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <path d="M21 15l-5-5L5 21"/>
-          </svg>
-          <span>Próximamente más recuerdos</span>
-        </div>
-      </div>
+        <figcaption>Un recuerdo especial</figcaption>
+      </figure>
 
     </div>
   </div>
@@ -1377,7 +1395,7 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
   <div class="container">
     <div class="reveal center" style="margin-bottom:3rem;">
       <p class="eyebrow center">Información</p>
-      <h2 class="section-title">Detalles del evento</h2>
+      <h2 class="section-title">Todo lo que necesitas saber</h2>
     </div>
 
     <div class="details-grid reveal-stagger">
@@ -1463,7 +1481,7 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
     <div class="location-grid reveal">
       <div class="location-info">
         <h3>Finca El Eucalipto</h3>
-        <p>Vía Cali – Jamundí, Valle del Cauca, Colombia. Te recomendamos llegar con tiempo para disfrutar cada momento de la celebración rodeados de naturaleza.</p>
+        <p>Vía Cali – Jamundí, Valle del Cauca, Colombia. Te recomendamos llegar con tiempo para disfrutar de la celebración y del entorno natural.</p>
         <!-- Reemplaza el enlace de abajo por la ubicación real en Google Maps -->
         <a class="btn btn-outline" href="https://www.google.com/maps/dir/?api=1&destination=Cali,Colombia" target="_blank" rel="noopener">
           Cómo llegar
@@ -1485,8 +1503,8 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
   <div class="container">
     <div class="rsvp-card reveal">
       <p class="eyebrow center">RSVP</p>
-      <h2 class="section-title">Confirma tu asistencia</h2>
-      <p class="section-lead center">Por favor confírmanos antes del 1 de diciembre de 2026 para poder organizar cada detalle con cariño.</p>
+      <h2 class="section-title">¿Nos acompañas?</h2>
+      <p class="section-lead center">Agradecemos que confirmes tu asistencia antes del 1 de diciembre de 2026. Así podremos preparar cada detalle con mucho cariño.</p>
       <a class="btn btn-whatsapp" id="whatsappBtn" href="#" target="_blank" rel="noopener">
         Confirmar por WhatsApp
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-5.9c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1-1.2-.5-2.4-1.6-3.1-2.9-.1-.2-.1-.4.1-.5l.7-.9c.1-.2.1-.4 0-.5l-.7-1.6c-.1-.2-.3-.3-.5-.3h-.6c-.2 0-.5.1-.6.3-.4.5-.7 1.1-.7 1.9 0 1.9 1.4 3.7 1.6 4 .2.3 2.1 3.2 5.2 4.3.5.2.9.3 1.3.2.4-.1 1.4-.6 1.6-1.2.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.4-.3z"/></svg>
@@ -1502,8 +1520,8 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
   <div class="container final-inner">
     <div class="reveal">
       <p class="eyebrow">Con todo nuestro cariño</p>
-      <h2 class="final-title">Gracias por ser parte de nuestra historia</h2>
-      <p class="final-text">Tu presencia es el regalo más hermoso que podemos recibir este día. Esperamos compartir contigo cada risa, cada baile y cada momento bajo el cielo de diciembre.</p>
+      <h2 class="final-title">Gracias por acompañarnos</h2>
+      <p class="final-text">Celebrar este día junto a ti hará que sea aún más memorable. Nos emociona compartir cada abrazo, cada risa y cada momento de esta nueva etapa.</p>
       <p class="final-signature">Alejandra &amp; Marlon</p>
     </div>
     <div class="final-footer">19 · 12 · 2026 — Finca El Eucalipto, Cali</div>
@@ -1550,12 +1568,12 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
   var openBtn = document.getElementById('openInvitation');
 
   openBtn.addEventListener('click', function(){
+    // Se solicita en el mismo clic para cumplir la política de audio del navegador.
+    startMusic();
     envelope.classList.add('is-opening');
     setTimeout(function(){
       envelopeScreen.classList.add('is-hidden');
       document.body.classList.remove('locked');
-      // Iniciar música cuando el invitado abre la invitación
-      startMusic();
     }, 550);
   });
 
@@ -1684,6 +1702,13 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
   // Callback global que YouTube llama cuando la API está lista
   window.onYouTubeIframeAPIReady = function(){
     ytPlayer = new YT.Player('ytPlayer', {
+      videoId: '4VHx3GM_gw8',
+      playerVars:{
+        autoplay: 0,
+        controls: 0,
+        playsinline: 1,
+        rel: 0
+      },
       events:{
         onReady: function(){
           musicReady = true;

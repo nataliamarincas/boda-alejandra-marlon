@@ -836,10 +836,19 @@ button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 }
 
 @media (max-width:760px){
-  .gallery-grid{ grid-template-columns:repeat(2, 1fr); }
-  .gallery-item--big{ grid-column:span 2; grid-row:span 1; aspect-ratio:16/11; }
-  .gallery-item--med{ grid-column:span 1; }
-  .gallery-item--small{ grid-column:span 1; }
+  .gallery-grid{ grid-template-columns:1fr; }
+  .gallery-item,
+  .gallery-item--big,
+  .gallery-item--med,
+  .gallery-item--small{
+    grid-column:1;
+    grid-row:auto;
+    aspect-ratio:auto;
+  }
+  .gallery-item img{
+    height:auto;
+    object-fit:initial;
+  }
 }
 
 /* ============================================================
